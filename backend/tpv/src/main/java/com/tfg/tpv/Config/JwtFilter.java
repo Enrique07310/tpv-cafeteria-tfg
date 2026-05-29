@@ -19,18 +19,21 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) 
+                                    FilterChain filterChain)
             throws ServletException, IOException {
 
-        // ✅ HEADERS CORS
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+        // ✅ CORS DINÁMICO
+        String origin = request.getHeader("Origin");
+
+        response.setHeader("Access-Control-Allow-Origin", origin);
+        response.setHeader("Vary", "Origin");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "*");
 
         String path = request.getServletPath();
         String method = request.getMethod();
 
-        // ✅ OPTIONS
+        // ✅ PETICIONES OPTIONS
         if (method.equalsIgnoreCase("OPTIONS")) {
             response.setStatus(HttpServletResponse.SC_OK);
             return;
