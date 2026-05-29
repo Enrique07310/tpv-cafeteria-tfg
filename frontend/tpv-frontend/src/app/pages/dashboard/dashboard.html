@@ -1,0 +1,63 @@
+<h1 class="titulo"> DASHBOARD CAFETERÍA</h1>
+
+<div class="contenedor">
+
+  <div class="card pedidos" routerLink="/tickets">
+
+    <h2> Total pedidos</h2>
+
+    <p>{{ totalPedidos }}</p>
+
+  </div>
+
+  <div class="card ventas">
+
+    <h2> Total ventas</h2>
+
+    <p>{{ totalVentas }} €</p>
+
+  </div>
+
+  <div class="card productos" routerLink="/productos">
+
+    <h2> Productos</h2>
+
+    <p>{{ totalProductos }}</p>
+
+  </div>
+
+</div>
+
+<div class="extra">
+
+  <div class="extra-card">
+
+    <h3> Mesas activas</h3>
+
+    <p>{{ totalMesas }}</p>
+
+  </div>
+
+  <div class="extra-card" routerLink="/tickets">
+
+    <h3> Tickets generados</h3>
+
+    <p>{{ totalPedidos }}</p>
+
+  </div>
+
+  <!-- 🏆 PRODUCTO TOP -->
+
+  <div class="extra-card producto-top">
+
+    <h3> Producto más vendido</h3>
+
+    <p>{{ productoTop }}</p>
+
+    <span>
+      {{ unidadesTop }} vendidos
+    </span>
+
+  </div>
+
+</div>

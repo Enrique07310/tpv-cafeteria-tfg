@@ -1,0 +1,355 @@
+body {
+
+  font-family: Arial, sans-serif;
+
+  background-color: #f5f5f5;
+
+}
+
+.titulo {
+
+  text-align: center;
+
+  margin-top: 30px;
+
+  color: #8B4513;
+
+  font-size: 40px;
+
+}
+
+/* ✅ BOTON BARRA */
+
+.tpv-opciones {
+
+  display: flex;
+
+  justify-content: center;
+
+  margin-bottom: 35px;
+
+}
+
+.opcion-barra {
+
+  padding: 14px 30px;
+
+  border: none;
+
+  background-color: #8B4513;
+
+  color: white;
+
+  border-radius: 14px;
+
+  font-size: 18px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
+
+}
+
+.opcion-barra:hover {
+
+  background-color: #6f3510;
+
+  transform: scale(1.05);
+
+}
+
+.mesas {
+
+  display: flex;
+
+  gap: 20px;
+
+  justify-content: center;
+
+  margin: 30px;
+
+  flex-wrap: wrap;
+
+}
+
+.mesas button {
+
+  padding: 15px 30px;
+
+  border: none;
+
+  background-color: #8B4513;
+
+  color: white;
+
+  font-size: 18px;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+
+}
+
+.mesas button:hover {
+
+  transform: scale(1.05);
+
+}
+
+.activa {
+
+  background-color: #2e8b57 !important;
+
+}
+
+.productos {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+  gap: 25px;
+
+  padding: 30px;
+
+}
+
+.producto-card {
+
+  background: white;
+
+  border-radius: 20px;
+
+  padding: 25px;
+
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.15);
+
+  text-align: center;
+
+  transition: 0.3s;
+
+}
+
+.producto-card:hover {
+
+  transform: translateY(-5px);
+
+}
+
+.producto-card h3 {
+
+  color: #8B4513;
+
+}
+
+.precio {
+
+  font-size: 28px;
+
+  font-weight: bold;
+
+  color: #2e8b57;
+
+  margin: 20px 0;
+
+}
+
+.producto-card button {
+
+  padding: 12px 20px;
+
+  border: none;
+
+  background-color: #28a745;
+
+  color: white;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-weight: bold;
+
+  transition: 0.3s;
+
+}
+
+.producto-card button:hover {
+
+  background-color: #218838;
+
+}
+
+.mesas-container {
+
+  display: flex;
+
+  gap: 25px;
+
+  padding: 30px;
+
+  flex-wrap: wrap;
+
+}
+
+.mesa {
+
+  flex: 1;
+
+  min-width: 320px;
+
+  background: white;
+
+  padding: 25px;
+
+  border-radius: 20px;
+
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.15);
+
+}
+
+.mesa h2 {
+
+  color: #8B4513;
+
+  margin-bottom: 20px;
+
+}
+
+.producto-mesa {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 12px 0;
+
+  border-bottom: 1px solid #ddd;
+
+}
+
+.producto-mesa button {
+
+  margin-left: 10px;
+
+  border: none;
+
+  background: transparent;
+
+  cursor: pointer;
+
+}
+
+.total {
+
+  margin-top: 25px;
+
+  color: #2e8b57;
+
+  font-size: 28px;
+
+}
+
+.pagar {
+
+  width: 100%;
+
+  margin-top: 20px;
+
+  padding: 15px;
+
+  border: none;
+
+  background-color: #2e8b57;
+
+  color: white;
+
+  border-radius: 12px;
+
+  font-size: 18px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+
+}
+
+.pagar:hover {
+
+  background-color: #256f46;
+
+}
+
+.agregar-mesa {
+
+  background-color: #2e8b57 !important;
+
+  font-weight: bold;
+
+}
+
+.agregar-mesa:hover {
+
+  background-color: #256f46 !important;
+
+}
+
+.buscador-container {
+
+  display: flex;
+
+  justify-content: center;
+
+  margin: 20px 0;
+
+}
+
+.buscador {
+
+  width: 350px;
+
+  max-width: 90%;
+
+  padding: 14px 18px;
+
+  border-radius: 14px;
+
+  border: 2px solid #ddd;
+
+  font-size: 16px;
+
+  outline: none;
+
+  transition: 0.3s;
+
+}
+
+.buscador:focus {
+
+  border-color: #8B4513;
+
+  box-shadow: 0px 0px 10px rgba(139,69,19,0.2);
+
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+  .titulo {
+
+    font-size: 30px;
+
+  }
+
+}

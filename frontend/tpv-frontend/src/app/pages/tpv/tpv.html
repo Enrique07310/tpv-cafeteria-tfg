@@ -1,0 +1,165 @@
+<h1 class="titulo"> TPV CAFETERÍA</h1>
+
+<!-- ✅ OPCIONES TPV -->
+
+<div class="tpv-opciones">
+
+  <button
+    class="opcion-barra"
+    routerLink="/barra"
+  >
+      Cuenta
+  </button>
+
+</div>
+
+<!-- 🍽️ MESAS -->
+
+<div class="mesas">
+
+  <div
+    class="mesa-boton"
+    *ngFor="let mesa of mesas"
+  >
+
+    <button
+      [class.activa]="mesaSeleccionada === mesa.id"
+      (click)="seleccionarMesa(mesa.id)"
+    >
+       {{ mesa.nombre }}
+    </button>
+
+    <!-- ✅ SOLO ADMIN -->
+    @if (rol === 'ADMIN') {
+
+      <button
+        class="eliminar-mesa"
+        (click)="eliminarMesa(mesa.id)"
+      >
+        ❌
+      </button>
+
+    }
+
+  </div>
+
+  <!-- ✅ SOLO ADMIN -->
+  @if (rol === 'ADMIN') {
+
+    <button class="agregar-mesa" (click)="agregarMesa()">
+      ➕ Añadir mesa
+    </button>
+
+  }
+
+</div>
+
+<!-- 🔍 BUSCADOR -->
+
+<div class="buscador-container">
+
+  <input
+    type="text"
+    placeholder=" Buscar producto..."
+    [(ngModel)]="busqueda"
+    class="buscador"
+  >
+
+</div>
+
+<!-- 🍔 PRODUCTOS -->
+
+<div class="productos">
+
+  <div
+    class="producto-card"
+    *ngFor="let producto of productosFiltrados()"
+  >
+
+    <h3>{{ producto.nombre }}</h3>
+
+    <p class="precio">
+      {{ producto.precio }} €
+    </p>
+
+    <!-- ✅ STOCK -->
+    <p class="stock">
+      Stock: {{ producto.stock }}
+    </p>
+
+    <!-- ✅ SI HAY STOCK -->
+    @if (producto.stock > 0) {
+
+      <button (click)="agregarProducto(producto)">
+         Añadir
+      </button>
+
+    }
+
+    <!-- ❌ SIN STOCK -->
+    @if (producto.stock <= 0) {
+
+      <button disabled>
+        Sin stock
+      </button>
+
+    }
+
+    <!-- ✅ SOLO ADMIN -->
+    @if (rol === 'ADMIN') {
+
+      <button
+        class="reponer"
+        (click)="reponerStock(producto)"
+      >
+        ➕ Reponer stock
+      </button>
+
+    }
+
+  </div>
+
+</div>
+
+<!-- 🍽️ CONTENIDO MESAS -->
+
+<div class="mesas-container">
+
+  <div class="mesa" *ngFor="let mesa of mesas">
+
+    <h2>
+      {{ mesa.nombre }}
+    </h2>
+
+    <div
+      class="producto-mesa"
+      *ngFor="let item of mesa.productos; let i = index"
+    >
+
+      <span>
+        {{ item.nombre }}
+      </span>
+
+      <div>
+
+        {{ item.precio }} €
+
+        <button (click)="eliminarProducto(mesa.id, i)">
+          ❌
+        </button>
+
+      </div>
+
+    </div>
+
+    <h3 class="total">
+      Total: {{ mesa.total }} €
+    </h3>
+
+    <button class="pagar" (click)="pagarMesa(mesa.id)">
+       PAGADO
+    </button>
+
+  </div>
+
+</div>

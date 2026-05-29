@@ -1,0 +1,91 @@
+<h1 class="titulo">
+   CUENTA
+</h1>
+
+<!-- ✅ OPCIONES -->
+
+<div class="tpv-opciones">
+
+  <button
+    class="opcion-mesas"
+    routerLink="/tpv"
+  >
+      Mesas
+  </button>
+
+</div>
+
+<button
+  class="crear-cuenta"
+  (click)="crearCuenta()"
+>
+  ➕ Crear cuenta
+</button>
+
+<div class="contenedor">
+
+  <div
+    class="cuenta-card"
+    *ngFor="let cuenta of cuentas"
+  >
+
+    <h2>
+      {{ cuenta.nombre }}
+    </h2>
+
+    <!-- PRODUCTOS -->
+
+    <div class="productos-barra">
+
+      <button
+        *ngFor="let producto of productos"
+        (click)="agregarProducto(cuenta.id, producto)"
+      >
+
+        {{ producto.nombre }}
+        -
+        {{ producto.precio }} €
+
+      </button>
+
+    </div>
+
+    <!-- PRODUCTOS AÑADIDOS -->
+
+    <div
+      class="producto"
+      *ngFor="let item of cuenta.productos; let i = index"
+    >
+
+      <span>
+        {{ item.nombre }}
+      </span>
+
+      <div>
+
+        {{ item.precio }} €
+
+        <button
+          (click)="eliminarProducto(cuenta.id, i)"
+        >
+          ❌
+        </button>
+
+      </div>
+
+    </div>
+
+    <h3 class="total">
+      Total: {{ cuenta.total }} €
+    </h3>
+
+    <button
+      class="pagar"
+      (click)="pagarCuenta(cuenta.id)"
+    >
+      PAGAR
+    </button>
+
+  </div>
+
+</div>

@@ -1,0 +1,24 @@
+<div class="inicio-container">
+  <div class="overlay"></div>
+
+  <div class="panel">
+    <h1>TPV CAFETERÍA</h1>
+    <p class="subtitulo">Selecciona una opción</p>
+
+    <div class="grid">
+      @if (rol === 'ADMIN') {
+        <a routerLink="/dashboard" class="card">Dashboard</a>
+        <a routerLink="/productos" class="card">Productos</a>
+        <a routerLink="/contratar" class="card">Contratar</a>
+      }
+
+      <a routerLink="/tpv" class="card">TPV</a>
+      <a routerLink="/barra" class="card">Cuenta</a>
+      <a routerLink="/tickets" class="card">Tickets</a>
+    </div>
+
+    <button class="logout" (click)="logout()">
+      Cerrar sesión
+    </button>
+  </div>
+</div>

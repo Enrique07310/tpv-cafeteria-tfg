@@ -1,0 +1,29 @@
+<h1 class="titulo"> PRODUCTOS CAFETERÍA</h1>
+
+<div class="contenedor">
+
+  <div class="card" *ngFor="let producto of productos">
+
+    <img
+      
+      [alt]="producto.nombre"
+      
+    >
+
+    <h2>{{ producto.nombre }}</h2>
+
+    <p class="precio">
+      {{ producto.precio }} €
+    </p>
+
+    <p class="stock">
+      Stock disponible: {{ producto.stock }}
+    </p>
+
+    <p class="estado">
+       En stock
+    </p>
+
+  </div>
+
+</div>

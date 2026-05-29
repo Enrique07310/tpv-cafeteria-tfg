@@ -1,0 +1,97 @@
+body {
+
+  background-color: #f5f5f5;
+
+}
+
+.titulo {
+
+  text-align: center;
+
+  margin-top: 30px;
+
+  color: #8b4513;
+
+  font-size: 40px;
+
+}
+
+.contenedor {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+
+  gap: 30px;
+
+  padding: 40px;
+
+}
+
+.ticket-card {
+
+  background: white;
+
+  border-radius: 20px;
+
+  padding: 25px;
+
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.15);
+
+  transition: 0.3s;
+
+}
+
+.ticket-card:hover {
+
+  transform: translateY(-5px);
+
+}
+
+.ticket-card h2 {
+
+  color: #8b4513;
+
+  margin-bottom: 10px;
+
+}
+
+.fecha {
+
+  color: gray;
+
+  margin-bottom: 20px;
+
+}
+
+.productos {
+
+  margin-top: 20px;
+
+}
+
+.producto {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  padding: 10px 0;
+
+  border-bottom: 1px solid #ddd;
+
+}
+
+.total {
+
+  margin-top: 25px;
+
+  text-align: right;
+
+  font-size: 24px;
+
+  font-weight: bold;
+
+  color: #2e8b57;
+
+}

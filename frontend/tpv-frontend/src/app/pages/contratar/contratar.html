@@ -1,0 +1,33 @@
+<div class="contenedor">
+
+  <div class="card">
+
+    <h1>
+       Contratar camarero
+    </h1>
+
+    <input
+      type="text"
+      placeholder="Nombre"
+      [(ngModel)]="nombre"
+    >
+
+    <input
+      type="email"
+      placeholder="Email"
+      [(ngModel)]="email"
+    >
+
+    <input
+      type="password"
+      placeholder="Contraseña"
+      [(ngModel)]="password"
+    >
+
+    <button (click)="contratar()">
+       Contratar
+    </button>
+
+  </div>
+
+</div>

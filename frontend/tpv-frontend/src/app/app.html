@@ -1,0 +1,19 @@
+@if (router.url !== '/' && router.url !== '/inicio') {
+  <nav class="navbar">
+    <div class="logo">
+      TPV CAFETERÍA
+    </div>
+
+    <div class="links">
+      <a routerLink="/inicio">
+        Volver al inicio
+      </a>
+
+      <button class="logout" (click)="logout()">
+        Cerrar sesión
+      </button>
+    </div>
+  </nav>
+}
+
+<router-outlet></router-outlet>

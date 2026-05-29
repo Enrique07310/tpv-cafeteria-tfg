@@ -1,0 +1,42 @@
+<h1 class="titulo"> HISTORIAL</h1>
+
+<div class="contenedor">
+
+  <div *ngFor="let ticket of tickets" class="ticket-card">
+
+    <h2>{{ ticket.mesa }}</h2>
+
+    <p class="fecha">
+       {{ ticket.fecha }}
+    </p>
+
+    <!-- ✅ EMPLEADO -->
+    <p class="empleado">
+       Atendido por:
+      <strong>{{ ticket.empleado }}</strong>
+    </p>
+
+    <div class="productos">
+
+      <div
+        *ngFor="let producto of ticket.productos"
+        class="producto"
+      >
+
+        <span>{{ producto.nombre }}</span>
+
+        <span>{{ producto.precio }} €</span>
+
+      </div>
+
+    </div>
+
+    <div class="total">
+
+      TOTAL: {{ ticket.total }} €
+
+    </div>
+
+  </div>
+
+</div>
