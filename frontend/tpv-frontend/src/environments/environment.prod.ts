@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.tpvcafeteria.com'
+  apiUrl: 'https://tpv-cafeteria-tfg.onrender.com'
 };
