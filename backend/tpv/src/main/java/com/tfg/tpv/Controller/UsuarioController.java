@@ -1,8 +1,8 @@
 package com.tfg.tpv.controller;
 
-import com.tfg.tpv.config.JwtUtil;
-import com.tfg.tpv.model.Usuario;
-import com.tfg.tpv.repository.UsuarioRepository;
+import com.tfg.tpv.model.Producto;
+import com.tfg.tpv.repository.ProductoRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,58 +10,70 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/productos")
 @CrossOrigin(origins = "*")
-public class UsuarioController {
+public class ProductoController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private ProductoRepository productoRepository;
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    // ✅ LISTAR USUARIOS
+    // ✅ OBTENER TODOS
     @GetMapping
-    public List<Usuario> listarUsuarios() {
-        return usuarioRepository.findAll();
+    public List<Producto> obtenerProductos() {
+        return productoRepository.findAll();
     }
 
-    // ✅ CREAR USUARIO
+    // ✅ OBTENER PRODUCTO POR ID
+    @GetMapping("/{id}")
+    public Object obtenerProducto(@PathVariable Long id) {
+
+        Optional<Producto> producto = productoRepository.findById(id);
+
+        if (producto.isEmpty()) {
+            return "❌ Producto no encontrado";
+        }
+
+        return producto.get();
+    }
+
+    // ✅ CREAR PRODUCTO
     @PostMapping
-    public Usuario crearUsuario(@RequestBody Usuario usuario) {
-        return usuarioRepository.save(usuario);
+    public Producto crearProducto(@RequestBody Producto producto) {
+        return productoRepository.save(producto);
     }
 
-    // ✅ LOGIN
-    @PostMapping("/login")
-    public Object login(@RequestBody Usuario usuario) {
-        // ✅ LIMPIAR ESPACIOS
-        String login = usuario.getEmail().trim();
-        Optional<Usuario> usuarioBD;
+    // ✅ ACTUALIZAR PRODUCTO
+    @PutMapping("/{id}")
+    public Object actualizarProducto(@PathVariable Long id,
+                                     @RequestBody Producto productoActualizado) {
 
-        // ✅ SI ES EMAIL
-        if (login.contains("@")) {
-            usuarioBD = usuarioRepository.findByEmail(login);
-        } else {
-            // ✅ SI ES NOMBRE
-            usuarioBD = usuarioRepository.findByNombre(login);
+        Optional<Producto> productoBD = productoRepository.findById(id);
+
+        if (productoBD.isEmpty()) {
+            return "❌ Producto no encontrado";
         }
 
-        // ❌ USUARIO NO EXISTE
-        if (usuarioBD.isEmpty()) {
-            return "❌ Usuario no encontrado";
+        Producto producto = productoBD.get();
+
+        producto.setNombre(productoActualizado.getNombre());
+        producto.setPrecio(productoActualizado.getPrecio());
+        producto.setStock(productoActualizado.getStock());
+
+        return productoRepository.save(producto);
+    }
+
+    // ✅ ELIMINAR PRODUCTO
+    @DeleteMapping("/{id}")
+    public Object eliminarProducto(@PathVariable Long id) {
+
+        Optional<Producto> producto = productoRepository.findById(id);
+
+        if (producto.isEmpty()) {
+            return "❌ Producto no encontrado";
         }
 
-        Usuario user = usuarioBD.get();
+        productoRepository.deleteById(id);
 
-        // ❌ CONTRASEÑA INCORRECTA
-        if (!usuario.getPassword().equals(user.getPassword())) {
-            return "❌ Contraseña incorrecta";
-        }
-
-        // ✅ GENERAR TOKEN
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRol());
-
-        return token;
+        return "✅ Producto eliminado";
     }
 }
