@@ -204,14 +204,15 @@ export class Tpv implements OnInit {
 
     }
 
+    // ✅ ENVIAR PRODUCTOS COMPLETOS
     const lineas = mesa.productos.map(
       (producto: any) => ({
 
-        producto: {
-          id: producto.id
-        },
+        producto: producto,
 
-        cantidad: 1
+        cantidad: 1,
+
+        subtotal: producto.precio
 
       })
     );
@@ -238,38 +239,6 @@ export class Tpv implements OnInit {
           response
         );
 
-        // ✅ RECUPERAR TICKETS
-        const tickets =
-          JSON.parse(
-            localStorage.getItem('tickets') || '[]'
-          );
-
-        // ✅ CREAR TICKET
-        const ticket = {
-
-          id: Date.now(),
-
-          mesa: mesa.nombre,
-
-          productos: [...mesa.productos],
-
-          total: Number(mesa.total.toFixed(2)),
-
-          fecha: new Date().toLocaleString(),
-
-          empleado:
-            localStorage.getItem('usuario') || 'Empleado'
-
-        };
-
-        // ✅ GUARDAR TICKET
-        tickets.push(ticket);
-
-        localStorage.setItem(
-          'tickets',
-          JSON.stringify(tickets)
-        );
-
         alert('✅ Pedido pagado correctamente');
 
         // ✅ LIMPIAR MESA
@@ -279,6 +248,7 @@ export class Tpv implements OnInit {
 
         this.guardarMesas();
 
+        // ✅ RECARGAR PRODUCTOS
         this.cargarProductos();
 
       },

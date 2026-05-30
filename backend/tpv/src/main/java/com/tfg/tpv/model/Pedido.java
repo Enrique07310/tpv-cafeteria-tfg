@@ -18,7 +18,7 @@ public class Pedido {
     // ✅ NUEVO
     private int mesa;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<LineaPedido> lineas;
 
     public Pedido() {

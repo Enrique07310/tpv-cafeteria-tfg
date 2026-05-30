@@ -66,7 +66,7 @@ export class Dashboard implements OnInit {
 
           tickets.forEach((ticket: any) => {
 
-            ticket.lineas.forEach((linea: any) => {
+            (ticket.lineas || []).forEach((linea: any) => {
 
               const nombre =
                 linea.producto.nombre;
