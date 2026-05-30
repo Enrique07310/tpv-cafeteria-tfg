@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,75 +19,98 @@ export class Dashboard implements OnInit {
 
   totalMesas: number = 0;
 
-  // 🏆 PRODUCTO MÁS VENDIDO
   productoTop: string = '';
 
   unidadesTop: number = 0;
 
+  private apiUrl = `${environment.apiUrl}/pedidos`;
+
+  constructor(private http: HttpClient) {}
+
   ngOnInit(): void {
 
-    const tickets =
-      JSON.parse(localStorage.getItem('tickets') || '[]');
+    this.cargarDashboard();
 
-    const mesas =
-      JSON.parse(localStorage.getItem('mesas') || '[]');
+  }
 
-    // ✅ TOTAL PEDIDOS
-    this.totalPedidos = tickets.length;
+  cargarDashboard() {
 
-    // ✅ TOTAL VENTAS
-    this.totalVentas = Number(
+    this.http.get<any[]>(this.apiUrl)
+      .subscribe({
 
-      tickets.reduce(
-        (total: number, ticket: any) =>
-          total + ticket.total,
-        0
-      ).toFixed(2)
+        next: (tickets) => {
 
-    );
+          // ✅ TOTAL PEDIDOS
+          this.totalPedidos = tickets.length;
 
-    // ✅ TOTAL MESAS
-    this.totalMesas = mesas.length;
+          // ✅ TOTAL VENTAS
+          this.totalVentas = Number(
 
-    // 🏆 PRODUCTOS MÁS VENDIDOS
-    const contadorProductos: any = {};
+            tickets.reduce(
+              (total: number, ticket: any) =>
+                total + ticket.total,
+              0
+            ).toFixed(2)
 
-    tickets.forEach((ticket: any) => {
+          );
 
-      ticket.productos.forEach((producto: any) => {
+          // ✅ TOTAL MESAS
+          const mesasUnicas = new Set(
+            tickets.map((ticket: any) => ticket.mesa)
+          );
 
-        if (contadorProductos[producto.nombre]) {
+          this.totalMesas = mesasUnicas.size;
 
-          contadorProductos[producto.nombre]++;
+          // ✅ PRODUCTO MÁS VENDIDO
+          const contadorProductos: any = {};
 
-        } else {
+          tickets.forEach((ticket: any) => {
 
-          contadorProductos[producto.nombre] = 1;
+            ticket.lineas.forEach((linea: any) => {
 
+              const nombre =
+                linea.producto.nombre;
+
+              if (contadorProductos[nombre]) {
+
+                contadorProductos[nombre]++;
+
+              } else {
+
+                contadorProductos[nombre] = 1;
+
+              }
+
+            });
+
+          });
+
+          let maxVentas = 0;
+
+          for (const producto in contadorProductos) {
+
+            if (
+              contadorProductos[producto] > maxVentas
+            ) {
+
+              maxVentas =
+                contadorProductos[producto];
+
+              this.productoTop = producto;
+
+              this.unidadesTop = maxVentas;
+
+            }
+
+          }
+
+        },
+
+        error: (error) => {
+          console.error('Error dashboard', error);
         }
 
       });
-
-    });
-
-    let maxVentas = 0;
-
-    for (const producto in contadorProductos) {
-
-      if (
-        contadorProductos[producto] > maxVentas
-      ) {
-
-        maxVentas =
-          contadorProductos[producto];
-
-        this.productoTop = producto;
-
-        this.unidadesTop = maxVentas;
-
-      }
-
-    }
 
   }
 

@@ -1,10 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 
 import { RouterLink } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
+
+import { HttpClient } from '@angular/common/http';
+
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-tpv',
@@ -17,7 +21,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './tpv.html',
   styleUrls: ['./tpv.css']
 })
-export class Tpv {
+export class Tpv implements OnInit {
 
   rol = '';
 
@@ -27,10 +31,17 @@ export class Tpv {
 
   mesaSeleccionada = 1;
 
-  // 🔍 BUSCADOR
   busqueda = '';
 
-  constructor() {
+  private apiProductos =
+    `${environment.apiUrl}/productos`;
+
+  private apiPedidos =
+    `${environment.apiUrl}/pedidos`;
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
 
     const token = localStorage.getItem('token');
 
@@ -43,96 +54,10 @@ export class Tpv {
 
     }
 
-    // ✅ RECUPERAR PRODUCTOS
-    const productosGuardados =
-      localStorage.getItem('productos');
+    // ✅ CARGAR PRODUCTOS DESDE BACKEND
+    this.cargarProductos();
 
-    if (productosGuardados) {
-
-      this.productos =
-        JSON.parse(productosGuardados);
-
-    } else {
-
-      this.productos = [
-
-        {
-          id: 6,
-          nombre: 'Cafe Solo',
-          precio: 1.3,
-          stock: 100
-        },
-
-        {
-          id: 7,
-          nombre: 'Cafe Americano',
-          precio: 1.4,
-          stock: 100
-        },
-
-        {
-          id: 8,
-          nombre: 'Cafe con leche',
-          precio: 1.4,
-          stock: 100
-        },
-
-        {
-          id: 9,
-          nombre: 'Cortado',
-          precio: 1.4,
-          stock: 100
-        },
-
-        {
-          id: 10,
-          nombre: 'Capuchino',
-          precio: 1.8,
-          stock: 100
-        },
-
-        {
-          id: 11,
-          nombre: 'Bombon',
-          precio: 1.9,
-          stock: 100
-        },
-
-        {
-          id: 12,
-          nombre: 'Bocadillo Jamon Serrano',
-          precio: 4.4,
-          stock: 50
-        },
-
-        {
-          id: 13,
-          nombre: 'Bocadillo Mixto',
-          precio: 4.4,
-          stock: 50
-        },
-
-        {
-          id: 14,
-          nombre: 'Bocadillo Tortilla Francesa',
-          precio: 4.6,
-          stock: 50
-        },
-
-        {
-          id: 15,
-          nombre: 'Bocadillo Bacon',
-          precio: 4.4,
-          stock: 50
-        }
-
-      ];
-
-      this.guardarProductos();
-
-    }
-
-    // ✅ RECUPERAR MESAS
+    // ✅ MESAS GLOBALES
     const mesasGuardadas =
       localStorage.getItem('mesas');
 
@@ -167,20 +92,36 @@ export class Tpv {
 
   }
 
+  // ✅ PRODUCTOS DESDE POSTGRESQL
+  cargarProductos() {
+
+    this.http.get<any[]>(this.apiProductos)
+      .subscribe({
+
+        next: (data) => {
+
+          this.productos = data;
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Error cargando productos',
+            error
+          );
+
+        }
+
+      });
+
+  }
+
   guardarMesas() {
 
     localStorage.setItem(
       'mesas',
       JSON.stringify(this.mesas)
-    );
-
-  }
-
-  guardarProductos() {
-
-    localStorage.setItem(
-      'productos',
-      JSON.stringify(this.productos)
     );
 
   }
@@ -237,7 +178,6 @@ export class Tpv {
 
   agregarProducto(producto: any) {
 
-    // ❌ SIN STOCK
     if (producto.stock <= 0) {
 
       alert('Sin stock');
@@ -255,19 +195,15 @@ export class Tpv {
 
       mesa.productos.push(producto);
 
-      // ✅ TOTAL BIEN REDONDEADO
       mesa.total = Number(
         (
           mesa.total + producto.precio
         ).toFixed(2)
       );
 
-      // ✅ RESTAR STOCK
       producto.stock--;
 
       this.guardarMesas();
-
-      this.guardarProductos();
 
     }
 
@@ -283,7 +219,6 @@ export class Tpv {
       const producto =
         mesa.productos[index];
 
-      // ✅ TOTAL BIEN REDONDEADO
       mesa.total = Number(
         Math.max(
           0,
@@ -291,7 +226,6 @@ export class Tpv {
         ).toFixed(2)
       );
 
-      // ✅ DEVOLVER STOCK
       const productoOriginal =
         this.productos.find(
           p => p.id === producto.id
@@ -307,13 +241,11 @@ export class Tpv {
 
       this.guardarMesas();
 
-      this.guardarProductos();
-
     }
 
   }
 
-  // ✅ SOLO ADMIN
+  // ✅ REPONER STOCK
   reponerStock(producto: any) {
 
     const cantidad =
@@ -329,7 +261,11 @@ export class Tpv {
 
     producto.stock += cantidad;
 
-    this.guardarProductos();
+    // ✅ ACTUALIZAR EN BACKEND
+    this.http.put(
+      `${this.apiProductos}/${producto.id}`,
+      producto
+    ).subscribe();
 
     alert(
       `Nuevo stock: ${producto.stock}`
@@ -337,7 +273,6 @@ export class Tpv {
 
   }
 
-  // 🔍 BUSCADOR
   productosFiltrados() {
 
     return this.productos.filter(
@@ -351,6 +286,7 @@ export class Tpv {
 
   }
 
+  // ✅ PAGAR MESA GLOBAL
   pagarMesa(mesaId: number) {
 
     const mesa =
@@ -358,40 +294,59 @@ export class Tpv {
 
     if (!mesa) return;
 
-    const ticket = {
+    // ✅ CREAR PEDIDO
+    const pedido = {
 
-      mesa: mesa.nombre,
+      mesa: mesa.id,
 
-      total: mesa.total,
+      lineas: mesa.productos.map(
+        (producto: any) => ({
 
-      fecha: new Date().toLocaleString(),
+          producto: {
+            id: producto.id
+          },
 
-      empleado:
-        localStorage.getItem('usuarioNombre'),
+          cantidad: 1,
 
-      productos: mesa.productos
+          subtotal: producto.precio
+
+        })
+
+      )
 
     };
 
-    const tickets =
-      JSON.parse(
-        localStorage.getItem('tickets') || '[]'
-      );
+    // ✅ GUARDAR EN POSTGRESQL
+    this.http.post(
+      this.apiPedidos,
+      pedido
+    ).subscribe({
 
-    tickets.push(ticket);
+      next: () => {
 
-    localStorage.setItem(
-      'tickets',
-      JSON.stringify(tickets)
-    );
+        mesa.productos = [];
 
-    mesa.productos = [];
+        mesa.total = 0;
 
-    mesa.total = 0;
+        this.guardarMesas();
 
-    this.guardarMesas();
+        // ✅ RECARGAR PRODUCTOS
+        this.cargarProductos();
 
-    alert(`${mesa.nombre} pagada`);
+        alert(`${mesa.nombre} pagada`);
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Error creando pedido',
+          error
+        );
+
+      }
+
+    });
 
   }
 
