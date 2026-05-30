@@ -38,26 +38,37 @@ export class Tpv implements OnInit {
 
     this.cargarProductos();
 
-    this.mesas = [
-      {
-        id: 1,
-        nombre: 'Mesa 1',
-        productos: [],
-        total: 0
-      },
-      {
-        id: 2,
-        nombre: 'Mesa 2',
-        productos: [],
-        total: 0
-      },
-      {
-        id: 3,
-        nombre: 'Mesa 3',
-        productos: [],
-        total: 0
-      }
-    ];
+    // ✅ RECUPERAR MESAS SI EXISTEN
+    const mesasGuardadas = localStorage.getItem('mesas');
+
+    if (mesasGuardadas) {
+
+      this.mesas = JSON.parse(mesasGuardadas);
+
+    } else {
+
+      this.mesas = [
+        {
+          id: 1,
+          nombre: 'Mesa 1',
+          productos: [],
+          total: 0
+        },
+        {
+          id: 2,
+          nombre: 'Mesa 2',
+          productos: [],
+          total: 0
+        },
+        {
+          id: 3,
+          nombre: 'Mesa 3',
+          productos: [],
+          total: 0
+        }
+      ];
+
+    }
 
   }
 
@@ -79,6 +90,15 @@ export class Tpv implements OnInit {
         }
 
       });
+
+  }
+
+  guardarMesas() {
+
+    localStorage.setItem(
+      'mesas',
+      JSON.stringify(this.mesas)
+    );
 
   }
 
@@ -104,6 +124,8 @@ export class Tpv implements OnInit {
 
     this.mesas.push(nuevaMesa);
 
+    this.guardarMesas();
+
   }
 
   eliminarMesa(id: number) {
@@ -111,6 +133,8 @@ export class Tpv implements OnInit {
     this.mesas = this.mesas.filter(
       mesa => mesa.id !== id
     );
+
+    this.guardarMesas();
 
   }
 
@@ -144,6 +168,8 @@ export class Tpv implements OnInit {
 
     mesa.total += producto.precio;
 
+    this.guardarMesas();
+
   }
 
   eliminarProducto(mesaId: number, index: number) {
@@ -161,6 +187,8 @@ export class Tpv implements OnInit {
     mesa.total -= producto.precio;
 
     mesa.productos.splice(index, 1);
+
+    this.guardarMesas();
 
   }
 
@@ -210,9 +238,46 @@ export class Tpv implements OnInit {
           response
         );
 
+        // ✅ RECUPERAR TICKETS
+        const tickets =
+          JSON.parse(
+            localStorage.getItem('tickets') || '[]'
+          );
+
+        // ✅ CREAR TICKET
+        const ticket = {
+
+          id: Date.now(),
+
+          mesa: mesa.nombre,
+
+          productos: [...mesa.productos],
+
+          total: Number(mesa.total.toFixed(2)),
+
+          fecha: new Date().toLocaleString(),
+
+          empleado:
+            localStorage.getItem('usuario') || 'Empleado'
+
+        };
+
+        // ✅ GUARDAR TICKET
+        tickets.push(ticket);
+
+        localStorage.setItem(
+          'tickets',
+          JSON.stringify(tickets)
+        );
+
+        alert('✅ Pedido pagado correctamente');
+
+        // ✅ LIMPIAR MESA
         mesa.productos = [];
 
         mesa.total = 0;
+
+        this.guardarMesas();
 
         this.cargarProductos();
 
