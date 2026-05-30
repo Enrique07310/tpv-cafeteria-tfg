@@ -159,7 +159,7 @@ export class Tpv implements OnInit {
     }
 
     const mesa = this.mesas.find(
-      m => m.id === mesaSeleccionada
+      m => m.id === this.mesaSeleccionada
     );
 
     if (!mesa) {
