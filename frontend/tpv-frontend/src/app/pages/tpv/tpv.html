@@ -25,7 +25,7 @@
        {{ mesa.nombre }}
     </button>
 
-    @if (rol === 'ADMIN') {
+    @if (rol.includes('ADMIN')) {
 
       <button
         class="eliminar-mesa"
@@ -38,7 +38,7 @@
 
   </div>
 
-  @if (rol === 'ADMIN') {
+  @if (rol.includes('ADMIN')) {
 
     <button class="agregar-mesa" (click)="agregarMesa()">
       ➕ Añadir mesa
@@ -92,7 +92,7 @@
 
     }
 
-    @if (rol === 'ADMIN') {
+    @if (rol.includes('ADMIN')) {
 
       <button
         class="reponer"
