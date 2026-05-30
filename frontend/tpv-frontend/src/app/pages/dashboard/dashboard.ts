@@ -40,10 +40,8 @@ export class Dashboard implements OnInit {
 
         next: (tickets) => {
 
-          // ✅ TOTAL PEDIDOS
           this.totalPedidos = tickets.length;
 
-          // ✅ TOTAL VENTAS
           this.totalVentas = Number(
 
             tickets.reduce(
@@ -54,14 +52,12 @@ export class Dashboard implements OnInit {
 
           );
 
-          // ✅ TOTAL MESAS
           const mesasUnicas = new Set(
             tickets.map((ticket: any) => ticket.mesa)
           );
 
           this.totalMesas = mesasUnicas.size;
 
-          // ✅ PRODUCTO MÁS VENDIDO
           const contadorProductos: any = {};
 
           tickets.forEach((ticket: any) => {

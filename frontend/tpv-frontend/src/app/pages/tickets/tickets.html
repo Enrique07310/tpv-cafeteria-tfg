@@ -4,28 +4,26 @@
 
   <div *ngFor="let ticket of tickets" class="ticket-card">
 
-    <h2>{{ ticket.mesa }}</h2>
+    <h2>Mesa {{ ticket.mesa }}</h2>
 
     <p class="fecha">
-       {{ ticket.fecha }}
-    </p>
-
-    <!-- ✅ EMPLEADO -->
-    <p class="empleado">
-       Atendido por:
-      <strong>{{ ticket.empleado }}</strong>
+      {{ ticket.fecha }}
     </p>
 
     <div class="productos">
 
       <div
-        *ngFor="let producto of ticket.productos"
+        *ngFor="let linea of ticket.lineas"
         class="producto"
       >
 
-        <span>{{ producto.nombre }}</span>
+        <span>
+          {{ linea.producto.nombre }}
+        </span>
 
-        <span>{{ producto.precio }} €</span>
+        <span>
+          {{ linea.subtotal.toFixed(2) }} €
+        </span>
 
       </div>
 
@@ -33,7 +31,8 @@
 
     <div class="total">
 
-      TOTAL: {{ ticket.total }} €
+      TOTAL:
+      {{ ticket.total.toFixed(2) }} €
 
     </div>
 

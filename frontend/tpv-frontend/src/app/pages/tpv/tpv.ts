@@ -38,7 +38,6 @@ export class Tpv implements OnInit {
 
     this.cargarProductos();
 
-    // ✅ RECUPERAR MESAS SI EXISTEN
     const mesasGuardadas = localStorage.getItem('mesas');
 
     if (mesasGuardadas) {
@@ -166,7 +165,9 @@ export class Tpv implements OnInit {
 
     mesa.productos.push(producto);
 
-    mesa.total += producto.precio;
+    mesa.total = Number(
+      (mesa.total + producto.precio).toFixed(2)
+    );
 
     this.guardarMesas();
 
@@ -184,7 +185,9 @@ export class Tpv implements OnInit {
 
     const producto = mesa.productos[index];
 
-    mesa.total -= producto.precio;
+    mesa.total = Number(
+      (mesa.total - producto.precio).toFixed(2)
+    );
 
     mesa.productos.splice(index, 1);
 
@@ -204,7 +207,6 @@ export class Tpv implements OnInit {
 
     }
 
-    // ✅ ENVIAR PRODUCTOS COMPLETOS
     const lineas = mesa.productos.map(
       (producto: any) => ({
 
@@ -225,30 +227,21 @@ export class Tpv implements OnInit {
 
     };
 
-    console.log('PEDIDO ENVIADO:', pedido);
-
     this.http.post(
       `${this.apiUrl}/pedidos`,
       pedido
     ).subscribe({
 
-      next: (response) => {
-
-        console.log(
-          'PEDIDO GUARDADO:',
-          response
-        );
+      next: () => {
 
         alert('✅ Pedido pagado correctamente');
 
-        // ✅ LIMPIAR MESA
         mesa.productos = [];
 
         mesa.total = 0;
 
         this.guardarMesas();
 
-        // ✅ RECARGAR PRODUCTOS
         this.cargarProductos();
 
       },
