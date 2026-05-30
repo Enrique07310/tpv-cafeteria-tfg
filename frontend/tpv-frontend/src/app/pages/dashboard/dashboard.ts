@@ -23,7 +23,7 @@ export class Dashboard implements OnInit {
 
   unidadesTop: number = 0;
 
-  private apiUrl = `${environment.apiUrl}/pedidos`;
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -31,11 +31,14 @@ export class Dashboard implements OnInit {
 
     this.cargarDashboard();
 
+    // ✅ CARGAR MESAS REALES
+    this.cargarMesas();
+
   }
 
   cargarDashboard() {
 
-    this.http.get<any[]>(this.apiUrl)
+    this.http.get<any[]>(`${this.apiUrl}/pedidos`)
       .subscribe({
 
         next: (tickets) => {
@@ -51,12 +54,6 @@ export class Dashboard implements OnInit {
             ).toFixed(2)
 
           );
-
-          const mesasUnicas = new Set(
-            tickets.map((ticket: any) => ticket.mesa)
-          );
-
-          this.totalMesas = mesasUnicas.size;
 
           const contadorProductos: any = {};
 
@@ -104,6 +101,31 @@ export class Dashboard implements OnInit {
 
         error: (error) => {
           console.error('Error dashboard', error);
+        }
+
+      });
+
+  }
+
+  // ✅ CONTAR MESAS REALES
+  cargarMesas() {
+
+    this.http.get<any[]>(`${this.apiUrl}/mesas`)
+      .subscribe({
+
+        next: (mesas) => {
+
+          this.totalMesas = mesas.length;
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'ERROR CARGANDO MESAS',
+            error
+          );
+
         }
 
       });
