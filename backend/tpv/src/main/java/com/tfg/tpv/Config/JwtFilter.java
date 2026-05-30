@@ -51,14 +51,14 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-       // ✅ PRODUCTOS LIBRES
+        // ✅ PRODUCTOS LIBRES
         if (path.contains("/productos")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // ✅ PEDIDOS LIBRES (GET)
-        if (path.contains("/pedidos") && method.equalsIgnoreCase("GET")) {
+        // ✅ PEDIDOS LIBRES
+        if (path.contains("/pedidos")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -75,19 +75,24 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         try {
+
             String email = jwtUtil.extractEmail(token);
             String rol = jwtUtil.extractRol(token);
 
             if (email == null || rol == null) {
+
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write("❌ Token inválido");
                 return;
+
             }
 
         } catch (Exception e) {
+
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write("Token inválido");
             return;
+
         }
 
         filterChain.doFilter(request, response);
