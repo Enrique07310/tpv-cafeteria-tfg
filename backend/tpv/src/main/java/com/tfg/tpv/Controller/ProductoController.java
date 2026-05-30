@@ -17,13 +17,13 @@ public class ProductoController {
     @Autowired
     private ProductoRepository productoRepository;
 
-    // ✅ OBTENER TODOS
+    // OBTENER TODOS
     @GetMapping
     public List<Producto> obtenerProductos() {
         return productoRepository.findAll();
     }
 
-    // ✅ OBTENER PRODUCTO POR ID
+    // OBTENER PRODUCTO POR ID
     @GetMapping("/{id}")
     public Object obtenerProducto(@PathVariable Long id) {
 
@@ -36,13 +36,13 @@ public class ProductoController {
         return producto.get();
     }
 
-    // ✅ CREAR PRODUCTO
+    // CREAR PRODUCTO
     @PostMapping
     public Producto crearProducto(@RequestBody Producto producto) {
         return productoRepository.save(producto);
     }
 
-    // ✅ ACTUALIZAR PRODUCTO
+    // ACTUALIZAR PRODUCTO
     @PutMapping("/{id}")
     public Object actualizarProducto(
             @PathVariable Long id,
@@ -65,7 +65,7 @@ public class ProductoController {
         return productoRepository.save(producto);
     }
 
-    // ✅ ELIMINAR PRODUCTO
+    // ELIMINAR PRODUCTO
     @DeleteMapping("/{id}")
     public Object eliminarProducto(@PathVariable Long id) {
 
