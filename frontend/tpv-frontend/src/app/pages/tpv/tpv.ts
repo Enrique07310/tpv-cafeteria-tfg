@@ -64,7 +64,7 @@ export class Tpv implements OnInit {
 
   }
 
-  // ✅ CARGAR MESAS BACKEND
+  // ✅ CARGAR MESAS DESDE BACKEND
   cargarMesas() {
 
     this.http.get<any[]>(`${this.apiUrl}/mesas`)
@@ -72,7 +72,7 @@ export class Tpv implements OnInit {
 
         next: (data) => {
 
-          this.mesas = data.map(mesa => ({
+          this.mesas = data.map((mesa: any) => ({
 
             ...mesa,
 
@@ -103,6 +103,7 @@ export class Tpv implements OnInit {
 
   }
 
+  // ✅ CREAR MESA BACKEND
   agregarMesa() {
 
     const nuevaMesa = {
@@ -138,6 +139,7 @@ export class Tpv implements OnInit {
 
   }
 
+  // ✅ ELIMINAR MESA BACKEND
   eliminarMesa(id: number) {
 
     this.http.delete(
@@ -191,6 +193,20 @@ export class Tpv implements OnInit {
       return;
     }
 
+    // ✅ SI NO EXISTE PRODUCTOS
+    if (!mesa.productos) {
+
+      mesa.productos = [];
+
+    }
+
+    // ✅ SI NO EXISTE TOTAL
+    if (!mesa.total) {
+
+      mesa.total = 0;
+
+    }
+
     mesa.productos.push(producto);
 
     mesa.total = Number(
@@ -205,7 +221,7 @@ export class Tpv implements OnInit {
       m => m.id === mesaId
     );
 
-    if (!mesa) {
+    if (!mesa || !mesa.productos) {
       return;
     }
 
@@ -225,7 +241,11 @@ export class Tpv implements OnInit {
       m => m.id === mesaId
     );
 
-    if (!mesa || mesa.productos.length === 0) {
+    if (
+      !mesa ||
+      !mesa.productos ||
+      mesa.productos.length === 0
+    ) {
 
       return;
 
