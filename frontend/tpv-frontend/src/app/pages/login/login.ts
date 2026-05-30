@@ -1,293 +1,116 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
+
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+
+import { Router } from '@angular/router';
+
+import { environment } from '../../../environments/environment';
 
 @Component({
-  selector: 'app-tpv',
+  selector: 'app-login',
   standalone: true,
   imports: [
     CommonModule,
     FormsModule,
-    HttpClientModule,
-    RouterModule
+    HttpClientModule
   ],
-  templateUrl: './tpv.html',
-  styleUrls: ['./tpv.css']
+  templateUrl: './login.html',
+  styleUrls: ['./login.css']
 })
-export class Tpv implements OnInit {
 
-  productos: any[] = [];
+export class Login {
 
-  mesas: any[] = [];
+  email = '';
 
-  mesaSeleccionada: number = 1;
+  password = '';
 
-  busqueda: string = '';
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
-  rol: string = '';
+  login() {
 
-  apiUrl = 'https://tpv-cafeteria-tfg.onrender.com';
+    // ✅ VALIDAR CAMPOS
+    if (!this.email || !this.password) {
 
-  constructor(private http: HttpClient) {}
-
-  ngOnInit(): void {
-
-    // ✅ LEER ROL CORRECTO
-    this.rol = localStorage.getItem('usuarioRol') || '';
-
-    console.log('ROL:', this.rol);
-
-    this.cargarProductos();
-
-    const mesasGuardadas = localStorage.getItem('mesas');
-
-    if (mesasGuardadas) {
-
-      this.mesas = JSON.parse(mesasGuardadas);
-
-    } else {
-
-      this.mesas = [
-        {
-          id: 1,
-          nombre: 'Mesa 1',
-          productos: [],
-          total: 0
-        },
-        {
-          id: 2,
-          nombre: 'Mesa 2',
-          productos: [],
-          total: 0
-        },
-        {
-          id: 3,
-          nombre: 'Mesa 3',
-          productos: [],
-          total: 0
-        }
-      ];
-
-    }
-
-  }
-
-  cargarProductos() {
-
-    this.http.get<any[]>(`${this.apiUrl}/productos`)
-      .subscribe({
-
-        next: (data) => {
-
-          this.productos = data;
-
-        },
-
-        error: (error) => {
-
-          console.error('ERROR CARGANDO PRODUCTOS', error);
-
-        }
-
-      });
-
-  }
-
-  guardarMesas() {
-
-    localStorage.setItem(
-      'mesas',
-      JSON.stringify(this.mesas)
-    );
-
-  }
-
-  seleccionarMesa(id: number) {
-
-    this.mesaSeleccionada = id;
-
-  }
-
-  agregarMesa() {
-
-    const nuevaMesa = {
-
-      id: this.mesas.length + 1,
-
-      nombre: `Mesa ${this.mesas.length + 1}`,
-
-      productos: [],
-
-      total: 0
-
-    };
-
-    this.mesas.push(nuevaMesa);
-
-    this.guardarMesas();
-
-  }
-
-  eliminarMesa(id: number) {
-
-    this.mesas = this.mesas.filter(
-      mesa => mesa.id !== id
-    );
-
-    this.guardarMesas();
-
-  }
-
-  productosFiltrados() {
-
-    return this.productos.filter(producto =>
-
-      producto.nombre
-        .toLowerCase()
-        .includes(this.busqueda.toLowerCase())
-
-    );
-
-  }
-
-  agregarProducto(producto: any) {
-
-    if (producto.stock <= 0) {
-      return;
-    }
-
-    const mesa = this.mesas.find(
-      m => m.id === this.mesaSeleccionada
-    );
-
-    if (!mesa) {
-      return;
-    }
-
-    mesa.productos.push(producto);
-
-    mesa.total = Number(
-      (mesa.total + producto.precio).toFixed(2)
-    );
-
-    this.guardarMesas();
-
-  }
-
-  eliminarProducto(mesaId: number, index: number) {
-
-    const mesa = this.mesas.find(
-      m => m.id === mesaId
-    );
-
-    if (!mesa) {
-      return;
-    }
-
-    const producto = mesa.productos[index];
-
-    mesa.total = Number(
-      (mesa.total - producto.precio).toFixed(2)
-    );
-
-    mesa.productos.splice(index, 1);
-
-    this.guardarMesas();
-
-  }
-
-  pagarMesa(mesaId: number) {
-
-    const mesa = this.mesas.find(
-      m => m.id === mesaId
-    );
-
-    if (!mesa || mesa.productos.length === 0) {
+      alert('Debes rellenar email y contraseña');
 
       return;
 
     }
 
-    const lineas = mesa.productos.map(
-      (producto: any) => ({
+    const datos = {
 
-        producto: producto,
+      email: this.email,
 
-        cantidad: 1,
-
-        subtotal: producto.precio
-
-      })
-    );
-
-    const pedido = {
-
-      mesa: mesaId,
-
-      lineas: lineas
+      password: this.password
 
     };
 
     this.http.post(
-      `${this.apiUrl}/pedidos`,
-      pedido
-    ).subscribe({
 
-      next: () => {
+      `${environment.apiUrl}/usuarios/login`,
 
-        alert('✅ Pedido pagado correctamente');
+      datos,
 
-        mesa.productos = [];
-
-        mesa.total = 0;
-
-        this.guardarMesas();
-
-        this.cargarProductos();
-
-      },
-
-      error: (error) => {
-
-        console.error(
-          'ERROR GUARDANDO PEDIDO:',
-          error
-        );
-
-      }
-
-    });
-
-  }
-
-  reponerStock(producto: any) {
-
-    const nuevoStock = producto.stock + 10;
-
-    this.http.put(
-
-      `${this.apiUrl}/productos/${producto.id}/stock`,
-
-      {
-        stock: nuevoStock
-      }
+      { responseType: 'text' }
 
     ).subscribe({
 
-      next: () => {
+      next: (token) => {
 
-        producto.stock = nuevoStock;
+        // ✅ SI EL BACKEND DEVUELVE ERROR
+        if (token.includes('❌')) {
+
+          alert(token);
+
+          return;
+
+        }
+
+        // ✅ GUARDAR TOKEN
+        localStorage.setItem(
+          'token',
+          token
+        );
+
+        // ✅ LEER JWT
+        const payload =
+          JSON.parse(atob(token.split('.')[1]));
+
+        // ✅ GUARDAR EMAIL
+        localStorage.setItem(
+          'usuarioEmail',
+          payload.sub
+        );
+
+        // ✅ GUARDAR ROL
+        localStorage.setItem(
+          'usuarioRol',
+          payload.rol
+        );
+
+        // ✅ GUARDAR NOMBRE
+        localStorage.setItem(
+          'usuarioNombre',
+          payload.sub
+        );
+
+        alert('Login correcto');
+
+        // ✅ IR AL INICIO
+        this.router.navigate(['/inicio']);
 
       },
 
-      error: (error) => {
+      error: () => {
 
-        console.error(
-          'ERROR REPONIENDO STOCK',
-          error
-        );
+        alert('Email o contraseña incorrectos');
 
       }
 
