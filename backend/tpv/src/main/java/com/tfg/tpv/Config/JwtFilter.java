@@ -63,6 +63,12 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
+        // ✅ MESAS LIBRES
+        if (path.contains("/mesas")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
 
         // ❌ SIN TOKEN
