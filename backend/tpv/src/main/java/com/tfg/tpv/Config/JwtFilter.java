@@ -51,8 +51,8 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        // ✅ PRODUCTOS LIBRES (GET)
-        if (path.contains("/productos") && method.equalsIgnoreCase("GET")) {
+       // ✅ PRODUCTOS LIBRES
+        if (path.contains("/productos")) {
             filterChain.doFilter(request, response);
             return;
         }
