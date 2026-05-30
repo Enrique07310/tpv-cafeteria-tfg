@@ -51,6 +51,18 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
+        // ✅ PRODUCTOS LIBRES (GET)
+        if (path.contains("/productos") && method.equalsIgnoreCase("GET")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // ✅ PEDIDOS LIBRES (GET)
+        if (path.contains("/pedidos") && method.equalsIgnoreCase("GET")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
 
         // ❌ SIN TOKEN
