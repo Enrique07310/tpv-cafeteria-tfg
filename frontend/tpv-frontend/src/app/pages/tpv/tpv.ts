@@ -294,10 +294,11 @@ export class Tpv implements OnInit {
 
     if (!mesa) return;
 
-    // ✅ CREAR PEDIDO
     const pedido = {
 
       mesa: mesa.id,
+
+      total: mesa.total,
 
       lineas: mesa.productos.map(
         (producto: any) => ({
@@ -316,7 +317,6 @@ export class Tpv implements OnInit {
 
     };
 
-    // ✅ GUARDAR EN POSTGRESQL
     this.http.post(
       this.apiPedidos,
       pedido
@@ -330,7 +330,6 @@ export class Tpv implements OnInit {
 
         this.guardarMesas();
 
-        // ✅ RECARGAR PRODUCTOS
         this.cargarProductos();
 
         alert(`${mesa.nombre} pagada`);
