@@ -36,6 +36,9 @@ export class Tpv implements OnInit {
 
     this.rol = localStorage.getItem('rol') || '';
 
+    // ✅ DEBUG ROL
+    console.log('ROL:', this.rol);
+
     this.cargarProductos();
 
     const mesasGuardadas = localStorage.getItem('mesas');
@@ -156,7 +159,7 @@ export class Tpv implements OnInit {
     }
 
     const mesa = this.mesas.find(
-      m => m.id === this.mesaSeleccionada
+      m => m.id === mesaSeleccionada
     );
 
     if (!mesa) {
