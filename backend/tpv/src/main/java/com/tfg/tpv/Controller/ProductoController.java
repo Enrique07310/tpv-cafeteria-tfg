@@ -1,79 +1,76 @@
 package com.tfg.tpv.controller;
 
-import com.tfg.tpv.model.Producto;
-import com.tfg.tpv.repository.ProductoRepository;
+            if (producto == null) {
+                return "Producto no encontrado";
+            }
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+            if (producto.getStock() < linea.getCantidad()) {
+                return "Stock insuficiente para " + producto.getNombre();
+            }
 
-import java.util.List;
-import java.util.Optional;
+            double subtotal = producto.getPrecio() * linea.getCantidad();
 
-@CrossOrigin(origins = "http://localhost:4200")
-@RestController
-@RequestMapping("/productos")
-public class ProductoController {
+            linea.setSubtotal(subtotal);
 
-    @Autowired
-    private ProductoRepository productoRepository;
+            total += subtotal;
 
-    //  OBTENER TODOS
+            // ✅ DESCONTAR STOCK
+            producto.setStock(producto.getStock() - linea.getCantidad());
+
+            productoRepository.save(producto);
+        }
+
+        pedido.setTotal(total);
+
+        // ✅ FECHA
+        pedido.setFecha(LocalDateTime.now());
+
+        // ✅ GUARDAR EN POSTGRESQL
+        return pedidoRepository.save(pedido);
+    }
+
+    // ✅ OBTENER TODOS LOS PEDIDOS
     @GetMapping
-    public List<Producto> obtenerProductos() {
-        return productoRepository.findAll();
+    public List<Pedido> obtenerPedidos() {
+        return pedidoRepository.findAll();
     }
 
-    //  OBTENER PRODUCTO POR ID
+    // ✅ OBTENER PEDIDO POR ID
     @GetMapping("/{id}")
-    public Object obtenerProducto(@PathVariable Long id) {
+    public Object obtenerPedidoPorId(@PathVariable Long id) {
 
-        Optional<Producto> producto = productoRepository.findById(id);
+        Pedido pedido = pedidoRepository.findById(id).orElse(null);
 
-        if (producto.isEmpty()) {
-            return " Producto no encontrado";
+        if (pedido == null) {
+            return "Pedido no encontrado";
         }
 
-        return producto.get();
-    }
+        Map<String, Object> ticket = new HashMap<>();
 
-    //  CREAR PRODUCTO
-    @PostMapping
-    public Producto crearProducto(@RequestBody Producto producto) {
-        return productoRepository.save(producto);
-    }
+        ticket.put("ticket", "TICKET TPV");
+        ticket.put("pedido", pedido.getId());
+        ticket.put("fecha", pedido.getFecha());
+        ticket.put("total", pedido.getTotal());
 
-    //  ACTUALIZAR PRODUCTO
-    @PutMapping("/{id}")
-    public Object actualizarProducto(@PathVariable Long id,
-                                     @RequestBody Producto productoActualizado) {
+        List<Map<String, Object>> productos = new ArrayList<>();
 
-        Optional<Producto> productoBD = productoRepository.findById(id);
+        for (LineaPedido linea : pedido.getLineas()) {
 
-        if (productoBD.isEmpty()) {
-            return " Producto no encontrado";
+            Map<String, Object> producto = new HashMap<>();
+
+            Producto productoBD = productoRepository
+                    .findById(linea.getProducto().getId())
+                    .orElse(null);
+
+            producto.put("producto", productoBD.getNombre());
+            producto.put("cantidad", linea.getCantidad());
+            producto.put("subtotal", linea.getSubtotal());
+
+            productos.add(producto);
         }
 
-        Producto producto = productoBD.get();
+        ticket.put("productos", productos);
 
-        producto.setNombre(productoActualizado.getNombre());
-        producto.setPrecio(productoActualizado.getPrecio());
-        producto.setStock(productoActualizado.getStock());
-
-        return productoRepository.save(producto);
-    }
-
-    //  ELIMINAR PRODUCTO
-    @DeleteMapping("/{id}")
-    public Object eliminarProducto(@PathVariable Long id) {
-
-        Optional<Producto> producto = productoRepository.findById(id);
-
-        if (producto.isEmpty()) {
-            return " Producto no encontrado";
-        }
-
-        productoRepository.deleteById(id);
-
-        return " Producto eliminado";
+        return ticket;
     }
 }

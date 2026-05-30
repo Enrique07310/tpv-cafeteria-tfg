@@ -14,6 +14,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/pedidos")
+@CrossOrigin(origins = "*")
 public class PedidoController {
 
     @Autowired
@@ -22,7 +23,7 @@ public class PedidoController {
     @Autowired
     private ProductoRepository productoRepository;
 
-    //  CREAR PEDIDO
+    // ✅ CREAR PEDIDO
     @PostMapping
     public Object crearPedido(@RequestBody Pedido pedido) {
 
@@ -48,7 +49,7 @@ public class PedidoController {
 
             total += subtotal;
 
-            //  DESCONTAR STOCK
+            // ✅ DESCONTAR STOCK
             producto.setStock(producto.getStock() - linea.getCantidad());
 
             productoRepository.save(producto);
@@ -56,19 +57,19 @@ public class PedidoController {
 
         pedido.setTotal(total);
 
-        //  GUARDAR FECHA
+        // ✅ GUARDAR FECHA
         pedido.setFecha(LocalDateTime.now());
 
         return pedidoRepository.save(pedido);
     }
 
-    //  OBTENER TODOS LOS PEDIDOS
+    // ✅ OBTENER TODOS LOS PEDIDOS
     @GetMapping
-    public Object obtenerPedidos() {
+    public List<Pedido> obtenerPedidos() {
         return pedidoRepository.findAll();
     }
 
-    //  OBTENER PEDIDO POR ID (TICKET)
+    // ✅ OBTENER PEDIDO POR ID
     @GetMapping("/{id}")
     public Object obtenerPedidoPorId(@PathVariable Long id) {
 
@@ -78,32 +79,21 @@ public class PedidoController {
             return "Pedido no encontrado";
         }
 
-        Map<String, Object> ticket = new HashMap<>();
+        return pedido;
+    }
 
-        ticket.put("ticket", "TICKET TPV");
-        ticket.put("pedido", pedido.getId());
-        ticket.put("fecha", pedido.getFecha());
-        ticket.put("total", pedido.getTotal());
+    // ✅ ELIMINAR PEDIDO
+    @DeleteMapping("/{id}")
+    public Object eliminarPedido(@PathVariable Long id) {
 
-        List<Map<String, Object>> productos = new ArrayList<>();
+        Pedido pedido = pedidoRepository.findById(id).orElse(null);
 
-        for (LineaPedido linea : pedido.getLineas()) {
-
-            Map<String, Object> producto = new HashMap<>();
-
-            Producto productoBD = productoRepository
-                    .findById(linea.getProducto().getId())
-                    .orElse(null);
-
-            producto.put("producto", productoBD.getNombre());
-            producto.put("cantidad", linea.getCantidad());
-            producto.put("subtotal", linea.getSubtotal());
-
-            productos.add(producto);
+        if (pedido == null) {
+            return "Pedido no encontrado";
         }
 
-        ticket.put("productos", productos);
+        pedidoRepository.deleteById(id);
 
-        return ticket;
+        return "Pedido eliminado";
     }
 }

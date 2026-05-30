@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
-    // suma total ventas
+    // ✅ TOTAL VENTAS
     @Query("SELECT SUM(p.total) FROM Pedido p")
     Double obtenerTotalVentas();
 }
