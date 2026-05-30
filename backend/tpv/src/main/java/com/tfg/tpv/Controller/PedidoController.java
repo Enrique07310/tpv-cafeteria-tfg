@@ -43,14 +43,17 @@ public class PedidoController {
                 return "Stock insuficiente para " + producto.getNombre();
             }
 
-            double subtotal = producto.getPrecio() * linea.getCantidad();
+            double subtotal =
+                    producto.getPrecio() * linea.getCantidad();
 
             linea.setSubtotal(subtotal);
 
             total += subtotal;
 
             // ✅ DESCONTAR STOCK
-            producto.setStock(producto.getStock() - linea.getCantidad());
+            producto.setStock(
+                    producto.getStock() - linea.getCantidad()
+            );
 
             productoRepository.save(producto);
         }
@@ -73,7 +76,8 @@ public class PedidoController {
     @GetMapping("/{id}")
     public Object obtenerPedidoPorId(@PathVariable Long id) {
 
-        Pedido pedido = pedidoRepository.findById(id).orElse(null);
+        Pedido pedido =
+                pedidoRepository.findById(id).orElse(null);
 
         if (pedido == null) {
             return "Pedido no encontrado";
@@ -86,7 +90,8 @@ public class PedidoController {
     @DeleteMapping("/{id}")
     public Object eliminarPedido(@PathVariable Long id) {
 
-        Pedido pedido = pedidoRepository.findById(id).orElse(null);
+        Pedido pedido =
+                pedidoRepository.findById(id).orElse(null);
 
         if (pedido == null) {
             return "Pedido no encontrado";
@@ -95,5 +100,14 @@ public class PedidoController {
         pedidoRepository.deleteById(id);
 
         return "Pedido eliminado";
+    }
+
+    // ✅ BORRAR TODOS LOS PEDIDOS
+    @DeleteMapping("/borrar")
+    public String borrarPedidos() {
+
+        pedidoRepository.deleteAll();
+
+        return "Pedidos borrados";
     }
 }
