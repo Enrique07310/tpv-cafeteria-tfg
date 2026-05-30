@@ -1,108 +1,293 @@
-import { Component } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { FormsModule } from '@angular/forms';
-
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-
-import { Router } from '@angular/router';
-
-import { environment } from '../../../environments/environment';
+import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-tpv',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
-  templateUrl: './login.html',
-  styleUrls: ['./login.css']
+  imports: [
+    CommonModule,
+    FormsModule,
+    HttpClientModule,
+    RouterModule
+  ],
+  templateUrl: './tpv.html',
+  styleUrls: ['./tpv.css']
 })
-export class Login {
+export class Tpv implements OnInit {
 
-  email = '';
+  productos: any[] = [];
 
-  password = '';
+  mesas: any[] = [];
 
-  constructor(
-    private http: HttpClient,
-    private router: Router
-  ) { }
+  mesaSeleccionada: number = 1;
 
-  login() {
+  busqueda: string = '';
 
-    // VALIDAR CAMPOS VACÍOS
-    if (!this.email || !this.password) {
+  rol: string = '';
 
-      alert('Debes rellenar email y contraseña');
+  apiUrl = 'https://tpv-cafeteria-tfg.onrender.com';
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+
+    // ✅ LEER ROL CORRECTO
+    this.rol = localStorage.getItem('usuarioRol') || '';
+
+    console.log('ROL:', this.rol);
+
+    this.cargarProductos();
+
+    const mesasGuardadas = localStorage.getItem('mesas');
+
+    if (mesasGuardadas) {
+
+      this.mesas = JSON.parse(mesasGuardadas);
+
+    } else {
+
+      this.mesas = [
+        {
+          id: 1,
+          nombre: 'Mesa 1',
+          productos: [],
+          total: 0
+        },
+        {
+          id: 2,
+          nombre: 'Mesa 2',
+          productos: [],
+          total: 0
+        },
+        {
+          id: 3,
+          nombre: 'Mesa 3',
+          productos: [],
+          total: 0
+        }
+      ];
+
+    }
+
+  }
+
+  cargarProductos() {
+
+    this.http.get<any[]>(`${this.apiUrl}/productos`)
+      .subscribe({
+
+        next: (data) => {
+
+          this.productos = data;
+
+        },
+
+        error: (error) => {
+
+          console.error('ERROR CARGANDO PRODUCTOS', error);
+
+        }
+
+      });
+
+  }
+
+  guardarMesas() {
+
+    localStorage.setItem(
+      'mesas',
+      JSON.stringify(this.mesas)
+    );
+
+  }
+
+  seleccionarMesa(id: number) {
+
+    this.mesaSeleccionada = id;
+
+  }
+
+  agregarMesa() {
+
+    const nuevaMesa = {
+
+      id: this.mesas.length + 1,
+
+      nombre: `Mesa ${this.mesas.length + 1}`,
+
+      productos: [],
+
+      total: 0
+
+    };
+
+    this.mesas.push(nuevaMesa);
+
+    this.guardarMesas();
+
+  }
+
+  eliminarMesa(id: number) {
+
+    this.mesas = this.mesas.filter(
+      mesa => mesa.id !== id
+    );
+
+    this.guardarMesas();
+
+  }
+
+  productosFiltrados() {
+
+    return this.productos.filter(producto =>
+
+      producto.nombre
+        .toLowerCase()
+        .includes(this.busqueda.toLowerCase())
+
+    );
+
+  }
+
+  agregarProducto(producto: any) {
+
+    if (producto.stock <= 0) {
+      return;
+    }
+
+    const mesa = this.mesas.find(
+      m => m.id === this.mesaSeleccionada
+    );
+
+    if (!mesa) {
+      return;
+    }
+
+    mesa.productos.push(producto);
+
+    mesa.total = Number(
+      (mesa.total + producto.precio).toFixed(2)
+    );
+
+    this.guardarMesas();
+
+  }
+
+  eliminarProducto(mesaId: number, index: number) {
+
+    const mesa = this.mesas.find(
+      m => m.id === mesaId
+    );
+
+    if (!mesa) {
+      return;
+    }
+
+    const producto = mesa.productos[index];
+
+    mesa.total = Number(
+      (mesa.total - producto.precio).toFixed(2)
+    );
+
+    mesa.productos.splice(index, 1);
+
+    this.guardarMesas();
+
+  }
+
+  pagarMesa(mesaId: number) {
+
+    const mesa = this.mesas.find(
+      m => m.id === mesaId
+    );
+
+    if (!mesa || mesa.productos.length === 0) {
 
       return;
 
     }
 
-    const datos = {
+    const lineas = mesa.productos.map(
+      (producto: any) => ({
 
-      email: this.email,
+        producto: producto,
 
-      password: this.password
+        cantidad: 1,
+
+        subtotal: producto.precio
+
+      })
+    );
+
+    const pedido = {
+
+      mesa: mesaId,
+
+      lineas: lineas
 
     };
 
     this.http.post(
-      `${environment.apiUrl}/usuarios/login`,
-      datos,
-      { responseType: 'text' }
-
+      `${this.apiUrl}/pedidos`,
+      pedido
     ).subscribe({
 
-      next: (token) => {
+      next: () => {
 
-        // SI EL BACKEND DEVUELVE ERROR
-        if (token.includes('❌')) {
+        alert('✅ Pedido pagado correctamente');
 
-          alert(token);
+        mesa.productos = [];
 
-          return;
+        mesa.total = 0;
 
-        }
+        this.guardarMesas();
 
-        // ✅ GUARDAR TOKEN
-        localStorage.setItem('token', token);
-
-        // ✅ LEER JWT
-        const payload =
-          JSON.parse(atob(token.split('.')[1]));
-
-        // ✅ GUARDAR EMAIL
-        localStorage.setItem(
-          'usuarioEmail',
-          payload.sub
-        );
-
-        // ✅ GUARDAR ROL
-        localStorage.setItem(
-          'usuarioRol',
-          payload.rol
-        );
-
-        // ✅ GUARDAR NOMBRE
-        const nombre = payload.sub;
-
-        localStorage.setItem(
-          'usuarioNombre',
-          nombre
-        );
-
-        alert('Login correcto');
-
-        
-        // ✅ IR A INICIO
-        this.router.navigate(['/inicio']);
+        this.cargarProductos();
 
       },
 
-      error: () => {
+      error: (error) => {
 
-        alert('Email o contraseña incorrectos');
+        console.error(
+          'ERROR GUARDANDO PEDIDO:',
+          error
+        );
+
+      }
+
+    });
+
+  }
+
+  reponerStock(producto: any) {
+
+    const nuevoStock = producto.stock + 10;
+
+    this.http.put(
+
+      `${this.apiUrl}/productos/${producto.id}/stock`,
+
+      {
+        stock: nuevoStock
+      }
+
+    ).subscribe({
+
+      next: () => {
+
+        producto.stock = nuevoStock;
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          'ERROR REPONIENDO STOCK',
+          error
+        );
 
       }
 
