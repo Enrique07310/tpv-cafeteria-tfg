@@ -34,10 +34,11 @@ export class Tpv implements OnInit {
 
   ngOnInit(): void {
 
-    this.rol = localStorage.getItem('rol') || '';
+    // ✅ LEER ROL CORRECTO
+    this.rol = localStorage.getItem('usuarioRol') || '';
 
-    // ✅ DEBUG ROL
-    console.log('ROL:', this.rol);
+    // ✅ MOSTRAR ROL EN PANTALLA
+    alert('ROL: ' + this.rol);
 
     this.cargarProductos();
 
