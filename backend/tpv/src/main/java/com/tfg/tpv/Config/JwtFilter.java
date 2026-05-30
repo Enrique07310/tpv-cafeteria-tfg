@@ -46,7 +46,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         // ✅ CREAR USUARIO LIBRE
-        if (path.equals("/usuarios") && method.equals("POST")) {
+        if (path.equals("/usuarios")) {
             filterChain.doFilter(request, response);
             return;
         }
