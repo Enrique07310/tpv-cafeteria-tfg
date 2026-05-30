@@ -4,10 +4,19 @@ import { CommonModule } from '@angular/common';
 
 import { RouterLink } from '@angular/router';
 
+import {
+  HttpClient,
+  HttpClientModule
+} from '@angular/common/http';
+
 @Component({
   selector: 'app-barra',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [
+    CommonModule,
+    RouterLink,
+    HttpClientModule
+  ],
   templateUrl: './barra.html',
   styleUrl: './barra.css',
 })
@@ -17,7 +26,9 @@ export class Barra {
 
   cuentas: any[] = [];
 
-  constructor() {
+  apiUrl = 'https://tpv-cafeteria-tfg.onrender.com';
+
+  constructor(private http: HttpClient) {
 
     // ✅ RECUPERAR PRODUCTOS
     const productosGuardados =
@@ -30,7 +41,6 @@ export class Barra {
 
     } else {
 
-      // ✅ PRODUCTOS INICIALES
       this.productos = [
 
         {
@@ -146,7 +156,6 @@ export class Barra {
 
   agregarProducto(cuentaId: number, producto: any) {
 
-    // ❌ SIN STOCK
     if (producto.stock <= 0) {
 
       alert('Sin stock');
@@ -164,14 +173,12 @@ export class Barra {
 
     cuenta.productos.push(producto);
 
-    // ✅ TOTAL BIEN REDONDEADO
     cuenta.total = Number(
       (
         cuenta.total + producto.precio
       ).toFixed(2)
     );
 
-    // ✅ BAJAR STOCK
     producto.stock--;
 
     this.guardarProductos();
@@ -195,7 +202,6 @@ export class Barra {
     const producto =
       cuenta.productos[index];
 
-    // ✅ TOTAL BIEN REDONDEADO
     cuenta.total = Number(
       Math.max(
         0,
@@ -203,7 +209,6 @@ export class Barra {
       ).toFixed(2)
     );
 
-    // ✅ DEVOLVER STOCK
     const productoOriginal =
       this.productos.find(
         p => p.id === producto.id
@@ -232,41 +237,56 @@ export class Barra {
 
     if (!cuenta) return;
 
-    const ticket = {
+    // ✅ CREAR LINEAS
+    const lineas = cuenta.productos.map(
+      (producto: any) => ({
 
-      mesa: `Cuenta - ${cuenta.nombre}`,
+        producto: producto,
 
-      total: cuenta.total,
+        cantidad: 1,
 
-      fecha: new Date().toLocaleString(),
+        subtotal: producto.precio
 
-      empleado:
-        localStorage.getItem('usuarioNombre'),
+      })
+    );
 
-      productos: cuenta.productos
+    // ✅ PEDIDO BACKEND
+    const pedido = {
+
+      mesa: 0,
+
+      lineas: lineas
 
     };
 
-    const tickets =
-      JSON.parse(
-        localStorage.getItem('tickets') || '[]'
-      );
+    this.http.post(
+      `${this.apiUrl}/pedidos`,
+      pedido
+    ).subscribe({
 
-    tickets.push(ticket);
+      next: () => {
 
-    localStorage.setItem(
-      'tickets',
-      JSON.stringify(tickets)
-    );
+        this.cuentas =
+          this.cuentas.filter(
+            c => c.id !== cuentaId
+          );
 
-    this.cuentas =
-      this.cuentas.filter(
-        c => c.id !== cuentaId
-      );
+        this.guardarCuentas();
 
-    this.guardarCuentas();
+        alert('✅ Cuenta pagada');
 
-    alert('Cuenta pagada');
+      },
+
+      error: (error) => {
+
+        console.error(
+          'ERROR PAGANDO CUENTA',
+          error
+        );
+
+      }
+
+    });
 
   }
 
