@@ -38,36 +38,8 @@ export class Tpv implements OnInit {
 
     this.cargarProductos();
 
-    const mesasGuardadas = localStorage.getItem('mesas');
-
-    if (mesasGuardadas) {
-
-      this.mesas = JSON.parse(mesasGuardadas);
-
-    } else {
-
-      this.mesas = [
-        {
-          id: 1,
-          nombre: 'Mesa 1',
-          productos: [],
-          total: 0
-        },
-        {
-          id: 2,
-          nombre: 'Mesa 2',
-          productos: [],
-          total: 0
-        },
-        {
-          id: 3,
-          nombre: 'Mesa 3',
-          productos: [],
-          total: 0
-        }
-      ];
-
-    }
+    // ✅ CARGAR MESAS DESDE BACKEND
+    this.cargarMesas();
 
   }
 
@@ -92,12 +64,36 @@ export class Tpv implements OnInit {
 
   }
 
-  guardarMesas() {
+  // ✅ CARGAR MESAS BACKEND
+  cargarMesas() {
 
-    localStorage.setItem(
-      'mesas',
-      JSON.stringify(this.mesas)
-    );
+    this.http.get<any[]>(`${this.apiUrl}/mesas`)
+      .subscribe({
+
+        next: (data) => {
+
+          this.mesas = data.map(mesa => ({
+
+            ...mesa,
+
+            productos: [],
+
+            total: 0
+
+          }));
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'ERROR CARGANDO MESAS',
+            error
+          );
+
+        }
+
+      });
 
   }
 
@@ -111,29 +107,61 @@ export class Tpv implements OnInit {
 
     const nuevaMesa = {
 
-      id: this.mesas.length + 1,
-
-      nombre: `Mesa ${this.mesas.length + 1}`,
-
-      productos: [],
-
-      total: 0
+      nombre: `Mesa ${this.mesas.length + 1}`
 
     };
 
-    this.mesas.push(nuevaMesa);
+    this.http.post(
 
-    this.guardarMesas();
+      `${this.apiUrl}/mesas`,
+
+      nuevaMesa
+
+    ).subscribe({
+
+      next: () => {
+
+        this.cargarMesas();
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          'ERROR CREANDO MESA',
+          error
+        );
+
+      }
+
+    });
 
   }
 
   eliminarMesa(id: number) {
 
-    this.mesas = this.mesas.filter(
-      mesa => mesa.id !== id
-    );
+    this.http.delete(
 
-    this.guardarMesas();
+      `${this.apiUrl}/mesas/${id}`
+
+    ).subscribe({
+
+      next: () => {
+
+        this.cargarMesas();
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          'ERROR ELIMINANDO MESA',
+          error
+        );
+
+      }
+
+    });
 
   }
 
@@ -169,8 +197,6 @@ export class Tpv implements OnInit {
       (mesa.total + producto.precio).toFixed(2)
     );
 
-    this.guardarMesas();
-
   }
 
   eliminarProducto(mesaId: number, index: number) {
@@ -190,8 +216,6 @@ export class Tpv implements OnInit {
     );
 
     mesa.productos.splice(index, 1);
-
-    this.guardarMesas();
 
   }
 
@@ -239,8 +263,6 @@ export class Tpv implements OnInit {
         mesa.productos = [];
 
         mesa.total = 0;
-
-        this.guardarMesas();
 
         this.cargarProductos();
 
