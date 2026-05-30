@@ -144,7 +144,9 @@ export class Tpv implements OnInit {
 
     this.http.delete(
 
-      `${this.apiUrl}/mesas/${id}`
+      `${this.apiUrl}/mesas/${id}`,
+
+      { responseType: 'text' }
 
     ).subscribe({
 
