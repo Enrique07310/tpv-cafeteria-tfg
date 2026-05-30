@@ -15,8 +15,8 @@ public class Pedido {
 
     private LocalDateTime fecha;
 
-    // ✅ NUEVO
-    private int mesa;
+    // ✅ AHORA STRING
+    private String mesa;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<LineaPedido> lineas;
@@ -52,12 +52,12 @@ public class Pedido {
         this.fecha = fecha;
     }
 
-    // ✅ GETTERS Y SETTERS MESA
-    public int getMesa() {
+    // ✅ GETTERS Y SETTERS STRING
+    public String getMesa() {
         return mesa;
     }
 
-    public void setMesa(int mesa) {
+    public void setMesa(String mesa) {
         this.mesa = mesa;
     }
 }

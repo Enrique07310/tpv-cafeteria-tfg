@@ -34,11 +34,7 @@ export class Tpv implements OnInit {
 
   ngOnInit(): void {
 
-    // ✅ LEER ROL CORRECTO
     this.rol = localStorage.getItem('usuarioRol') || '';
-
-    // ✅ MOSTRAR ROL EN PANTALLA
-    alert('ROL: ' + this.rol);
 
     this.cargarProductos();
 
@@ -225,7 +221,7 @@ export class Tpv implements OnInit {
 
     const pedido = {
 
-      mesa: mesaId,
+      mesa: mesa.nombre,
 
       lineas: lineas
 

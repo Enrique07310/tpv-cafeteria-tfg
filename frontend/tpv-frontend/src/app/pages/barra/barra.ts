@@ -30,7 +30,6 @@ export class Barra {
 
   constructor(private http: HttpClient) {
 
-    // ✅ RECUPERAR PRODUCTOS
     const productosGuardados =
       localStorage.getItem('productos');
 
@@ -98,7 +97,6 @@ export class Barra {
 
     }
 
-    // ✅ RECUPERAR CUENTAS
     const cuentasGuardadas =
       localStorage.getItem('cuentasBarra');
 
@@ -237,7 +235,6 @@ export class Barra {
 
     if (!cuenta) return;
 
-    // ✅ CREAR LINEAS
     const lineas = cuenta.productos.map(
       (producto: any) => ({
 
@@ -250,10 +247,9 @@ export class Barra {
       })
     );
 
-    // ✅ PEDIDO BACKEND
     const pedido = {
 
-      mesa: 0,
+      mesa: `Cuenta ${cuenta.nombre}`,
 
       lineas: lineas
 
