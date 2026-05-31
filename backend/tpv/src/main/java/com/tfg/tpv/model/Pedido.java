@@ -15,7 +15,7 @@ public class Pedido {
 
     private LocalDateTime fecha;
 
-    // ✅ AHORA STRING
+    //  AHORA STRING
     private String mesa;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -52,7 +52,7 @@ public class Pedido {
         this.fecha = fecha;
     }
 
-    // ✅ GETTERS Y SETTERS STRING
+    //  GETTERS Y SETTERS STRING
     public String getMesa() {
         return mesa;
     }

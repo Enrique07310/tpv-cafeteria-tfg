@@ -38,7 +38,7 @@ export class Tpv implements OnInit {
 
     this.cargarProductos();
 
-    // ✅ CARGAR MESAS DESDE BACKEND
+    //  CARGAR MESAS DESDE BACKEND
     this.cargarMesas();
 
   }
@@ -64,7 +64,7 @@ export class Tpv implements OnInit {
 
   }
 
-  // ✅ CARGAR MESAS DESDE BACKEND
+  //  CARGAR MESAS DESDE BACKEND
   cargarMesas() {
 
     this.http.get<any[]>(`${this.apiUrl}/mesas`)
@@ -103,7 +103,7 @@ export class Tpv implements OnInit {
 
   }
 
-  // ✅ CREAR MESA BACKEND
+  //  CREAR MESA BACKEND
   agregarMesa() {
 
     const nuevaMesa = {
@@ -139,7 +139,7 @@ export class Tpv implements OnInit {
 
   }
 
-  // ✅ ELIMINAR MESA BACKEND
+  //  ELIMINAR MESA BACKEND
   eliminarMesa(id: number) {
 
     this.http.delete(
@@ -195,14 +195,14 @@ export class Tpv implements OnInit {
       return;
     }
 
-    // ✅ SI NO EXISTE PRODUCTOS
+    //  SI NO EXISTE PRODUCTOS
     if (!mesa.productos) {
 
       mesa.productos = [];
 
     }
 
-    // ✅ SI NO EXISTE TOTAL
+    //  SI NO EXISTE TOTAL
     if (!mesa.total) {
 
       mesa.total = 0;
@@ -280,7 +280,7 @@ export class Tpv implements OnInit {
 
       next: () => {
 
-        alert('✅ Pedido pagado correctamente');
+        alert(' Pedido pagado correctamente');
 
         mesa.productos = [];
 

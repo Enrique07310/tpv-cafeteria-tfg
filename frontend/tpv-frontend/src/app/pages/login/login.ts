@@ -35,7 +35,7 @@ export class Login {
 
   login() {
 
-    // ✅ VALIDAR CAMPOS
+    //  VALIDAR CAMPOS
     if (!this.email || !this.password) {
 
       alert('Debes rellenar email y contraseña');
@@ -64,7 +64,7 @@ export class Login {
 
       next: (token) => {
 
-        // ✅ SI EL BACKEND DEVUELVE ERROR
+        //  SI EL BACKEND DEVUELVE ERROR
         if (token.includes('❌')) {
 
           alert(token);
@@ -73,29 +73,29 @@ export class Login {
 
         }
 
-        // ✅ GUARDAR TOKEN
+        //  GUARDAR TOKEN
         localStorage.setItem(
           'token',
           token
         );
 
-        // ✅ LEER JWT
+        //  LEER JWT
         const payload =
           JSON.parse(atob(token.split('.')[1]));
 
-        // ✅ GUARDAR EMAIL
+        //  GUARDAR EMAIL
         localStorage.setItem(
           'usuarioEmail',
           payload.sub
         );
 
-        // ✅ GUARDAR ROL
+        //  GUARDAR ROL
         localStorage.setItem(
           'usuarioRol',
           payload.rol
         );
 
-        // ✅ GUARDAR NOMBRE
+        //  GUARDAR NOMBRE
         localStorage.setItem(
           'usuarioNombre',
           payload.sub
@@ -103,7 +103,7 @@ export class Login {
 
         alert('Login correcto');
 
-        // ✅ IR AL INICIO
+        //  IR AL INICIO
         this.router.navigate(['/inicio']);
 
       },

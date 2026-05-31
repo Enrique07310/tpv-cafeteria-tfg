@@ -269,7 +269,7 @@ export class Barra {
 
         this.guardarCuentas();
 
-        alert('✅ Cuenta pagada');
+        alert(' Cuenta pagada');
 
       },
 

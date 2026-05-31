@@ -31,7 +31,7 @@ export class Dashboard implements OnInit {
 
     this.cargarDashboard();
 
-    // ✅ CARGAR MESAS REALES
+    //  CARGAR MESAS REALES
     this.cargarMesas();
 
   }
@@ -107,7 +107,7 @@ export class Dashboard implements OnInit {
 
   }
 
-  // ✅ CONTAR MESAS REALES
+  //  CONTAR MESAS REALES
   cargarMesas() {
 
     this.http.get<any[]>(`${this.apiUrl}/mesas`)

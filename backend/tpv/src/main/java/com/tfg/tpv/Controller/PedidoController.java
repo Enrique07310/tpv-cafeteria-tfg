@@ -23,7 +23,7 @@ public class PedidoController {
     @Autowired
     private ProductoRepository productoRepository;
 
-    // ✅ CREAR PEDIDO
+    //  CREAR PEDIDO
     @PostMapping
     public Object crearPedido(@RequestBody Pedido pedido) {
 
@@ -43,37 +43,41 @@ public class PedidoController {
                 return "Stock insuficiente para " + producto.getNombre();
             }
 
-            double subtotal = producto.getPrecio() * linea.getCantidad();
+            double subtotal =
+                    producto.getPrecio() * linea.getCantidad();
 
             linea.setSubtotal(subtotal);
 
             total += subtotal;
 
-            // ✅ DESCONTAR STOCK
-            producto.setStock(producto.getStock() - linea.getCantidad());
+            //  DESCONTAR STOCK
+            producto.setStock(
+                    producto.getStock() - linea.getCantidad()
+            );
 
             productoRepository.save(producto);
         }
 
         pedido.setTotal(total);
 
-        // ✅ GUARDAR FECHA
+        //  GUARDAR FECHA
         pedido.setFecha(LocalDateTime.now());
 
         return pedidoRepository.save(pedido);
     }
 
-    // ✅ OBTENER TODOS LOS PEDIDOS
+    //  OBTENER TODOS LOS PEDIDOS
     @GetMapping
     public List<Pedido> obtenerPedidos() {
         return pedidoRepository.findAll();
     }
 
-    // ✅ OBTENER PEDIDO POR ID
+    //  OBTENER PEDIDO POR ID
     @GetMapping("/{id}")
     public Object obtenerPedidoPorId(@PathVariable Long id) {
 
-        Pedido pedido = pedidoRepository.findById(id).orElse(null);
+        Pedido pedido =
+                pedidoRepository.findById(id).orElse(null);
 
         if (pedido == null) {
             return "Pedido no encontrado";
@@ -82,11 +86,12 @@ public class PedidoController {
         return pedido;
     }
 
-    // ✅ ELIMINAR PEDIDO
+    //  ELIMINAR PEDIDO
     @DeleteMapping("/{id}")
     public Object eliminarPedido(@PathVariable Long id) {
 
-        Pedido pedido = pedidoRepository.findById(id).orElse(null);
+        Pedido pedido =
+                pedidoRepository.findById(id).orElse(null);
 
         if (pedido == null) {
             return "Pedido no encontrado";
@@ -95,5 +100,14 @@ public class PedidoController {
         pedidoRepository.deleteById(id);
 
         return "Pedido eliminado";
+    }
+
+    //  BORRAR TODOS LOS PEDIDOS
+    @DeleteMapping("/borrar")
+    public String borrarPedidos() {
+
+        pedidoRepository.deleteAll();
+
+        return "Pedidos borrados";
     }
 }

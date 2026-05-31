@@ -1,11 +1,27 @@
 <h1 class="titulo"> HISTORIAL</h1>
 
+<!--  SOLO ADMIN -->
+
+@if (rol === 'ADMIN') {
+
+  <div class="acciones-admin">
+
+    <button
+      class="borrar-historial"
+      (click)="borrarHistorial()"
+    >
+       Limpiar historial
+    </button>
+
+  </div>
+
+}
+
 <div class="contenedor">
 
   <div *ngFor="let ticket of tickets" class="ticket-card">
 
-  <h2>{{ ticket.mesa }}</h2>
-
+    <h2>{{ ticket.mesa }}</h2>
 
     <p class="fecha">
       {{ ticket.fecha }}
