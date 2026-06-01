@@ -40,8 +40,23 @@ public class UsuarioController {
     @PostMapping("/login")
     public Object login(@RequestBody Usuario usuarioLogin) {
 
-        Optional<Usuario> usuarioBD =
-                usuarioRepository.findByEmail(usuarioLogin.getEmail());
+        Optional<Usuario> usuarioBD;
+
+        // ✅ BUSCAR POR EMAIL
+        usuarioBD =
+                usuarioRepository.findByEmail(
+                        usuarioLogin.getEmail()
+                );
+
+        // ✅ SI NO EXISTE → BUSCAR POR NOMBRE
+        if (usuarioBD.isEmpty()) {
+
+            usuarioBD =
+                    usuarioRepository.findByNombre(
+                            usuarioLogin.getEmail()
+                    );
+
+        }
 
         if (usuarioBD.isEmpty()) {
             return "❌ Usuario no encontrado";
@@ -54,7 +69,10 @@ public class UsuarioController {
         }
 
         String token =
-                jwtUtil.generateToken(usuario.getEmail(), usuario.getRol());
+                jwtUtil.generateToken(
+                        usuario.getEmail(),
+                        usuario.getRol()
+                );
 
         Map<String, Object> respuesta = new HashMap<>();
 
