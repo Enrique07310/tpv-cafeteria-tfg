@@ -15,7 +15,7 @@ export class Dashboard implements OnInit {
 
   totalVentas: number = 0;
 
-  totalProductos: number = 10;
+  totalProductos: number = 0;
 
   totalMesas: number = 0;
 
@@ -31,8 +31,11 @@ export class Dashboard implements OnInit {
 
     this.cargarDashboard();
 
-    //  CARGAR MESAS REALES
+    //  CARGAR MESAS 
     this.cargarMesas();
+
+    //  CARGAR PRODUCTOS 
+    this.cargarProductos();
 
   }
 
@@ -107,7 +110,7 @@ export class Dashboard implements OnInit {
 
   }
 
-  //  CONTAR MESAS REALES
+  //  CONTAR MESAS 
   cargarMesas() {
 
     this.http.get<any[]>(`${this.apiUrl}/mesas`)
@@ -123,6 +126,31 @@ export class Dashboard implements OnInit {
 
           console.error(
             'ERROR CARGANDO MESAS',
+            error
+          );
+
+        }
+
+      });
+
+  }
+
+  //  CONTAR PRODUCTOS 
+  cargarProductos() {
+
+    this.http.get<any[]>(`${this.apiUrl}/productos`)
+      .subscribe({
+
+        next: (productos) => {
+
+          this.totalProductos = productos.length;
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'ERROR CARGANDO PRODUCTOS',
             error
           );
 
