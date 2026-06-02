@@ -22,7 +22,7 @@ public class UsuarioController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // ✅ CREAR USUARIO
+    //  CREAR USUARIO
     @PostMapping
     public Object crearUsuario(@RequestBody Usuario usuario) {
 
@@ -36,19 +36,19 @@ public class UsuarioController {
         return usuarioRepository.save(usuario);
     }
 
-    // ✅ LOGIN
+    //  LOGIN
     @PostMapping("/login")
     public Object login(@RequestBody Usuario usuarioLogin) {
 
         Optional<Usuario> usuarioBD;
 
-        // ✅ BUSCAR POR EMAIL
+        //  BUSCAR POR EMAIL
         usuarioBD =
                 usuarioRepository.findByEmail(
                         usuarioLogin.getEmail()
                 );
 
-        // ✅ SI NO EXISTE → BUSCAR POR NOMBRE
+        //  SI NO EXISTE BUSCA POR NOMBRE
         if (usuarioBD.isEmpty()) {
 
             usuarioBD =
@@ -83,7 +83,7 @@ public class UsuarioController {
         return respuesta;
     }
 
-    // ✅ OBTENER USUARIOS
+    //  OBTENER USUARIOS
     @GetMapping
     public Object obtenerUsuarios() {
         return usuarioRepository.findAll();

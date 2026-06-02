@@ -65,6 +65,27 @@ public class ProductoController {
         return productoRepository.save(producto);
     }
 
+    // ✅ REPONER STOCK
+    @PutMapping("/{id}/stock")
+    public Object reponerStock(
+            @PathVariable Long id,
+            @RequestBody Producto productoActualizado
+    ) {
+
+        Optional<Producto> productoBD =
+                productoRepository.findById(id);
+
+        if (productoBD.isEmpty()) {
+            return "Producto no encontrado";
+        }
+
+        Producto producto = productoBD.get();
+
+        producto.setStock(productoActualizado.getStock());
+
+        return productoRepository.save(producto);
+    }
+
     // ELIMINAR PRODUCTO
     @DeleteMapping("/{id}")
     public Object eliminarProducto(@PathVariable Long id) {
